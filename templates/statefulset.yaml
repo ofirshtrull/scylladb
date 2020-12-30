@@ -75,20 +75,16 @@ spec:
             fieldRef:
               fieldPath: spec.nodeName
         args:
-          - --seeds
-          - {{ template "scylladb.fullname" . }}-0.{{ template "scylladb.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
-          {{- if and (eq .Values.environment.type "GKE") (.Values.environment.public_access) }}
-          - --broadcast-rpc-address
-          - {{ .Values.command.gcpGetPublicIP | squote }}
-          {{- end }}
-          {{- if .Values.resources.limits.cpu }}
-          - --smp
-          - {{ .Values.resources.limits.cpu | quote }}
-          {{- end }}
-          {{- if .Values.resources.limits.memory }}
-          - --memory
-          - {{ .Values.resources.limits.memory | trimSuffix "i" | quote }}
-          {{- end }}
+        - --seeds
+        - {{ template "scylladb.fullname" . }}-0.{{ template "scylladb.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+        {{- if .Values.config.cpu }}
+        - --smp
+        - {{ .Values.config.cpu | quote }}
+        {{- end }}
+        {{- if .Values.config.memory }}
+        - --memory
+        - {{ .Values.config.memory | quote }}
+        {{- end }}
         lifecycle:
           preStop:
             exec:
